@@ -19,9 +19,6 @@ use App\Http\Controllers\TarefasController;
 
 Route::get('/', HomeController::class);
 Route::view('/ola', 'teste');
-Route::get('login', function(){
-    echo 'Página de Login...';
-})->name('login');
 Route::resource('todo', 'TodoController');
 /*
 GET    - /todo           - index   - todo.index   - Lista os itens
@@ -38,22 +35,22 @@ Route::prefix('tarefas')->group(function(){
 
     Route::get('/', [TarefasController::class, 'list'])->name('tarefas.list'); // Listagem de tarefas
 
-    Route::get('add', [TarefasController::class, 'add'])->name('tarefas.add'); // Tela de adição de nova tarefa
-    Route::post('add', [TarefasController::class, 'addAction']); // Ação de adição de nova tarefa
+    Route::get('add', [TarefasController::class, 'add'])->name('tarefas.add')->middleware('auth'); // Tela de adição de nova tarefa
+    Route::post('add', [TarefasController::class, 'addAction'])->middleware('auth'); // Ação de adição de nova tarefa
 
-    Route::get('edit/{id}', [TarefasController::class, 'edit'])->name('tarefas.edit'); // Tela de edição
-    Route::post('edit/{id}', [TarefasController::class, 'editAction']); // Ação de edição
+    Route::get('edit/{id}', [TarefasController::class, 'edit'])->name('tarefas.edit')->middleware('auth'); // Tela de edição
+    Route::post('edit/{id}', [TarefasController::class, 'editAction'])->middleware('auth'); // Ação de edição
 
-    Route::get('delete/{id}', [TarefasController::class, 'del'])->name('tarefas.del'); // Ação de deletar
+    Route::get('delete/{id}', [TarefasController::class, 'del'])->name('tarefas.del')->middleware('auth'); // Ação de deletar
 
-    Route::get('marcar/{id}', [TarefasController::class, 'done'])->name('tarefas.done'); // Marcar resolvido/não.
+    Route::get('marcar/{id}', [TarefasController::class, 'done'])->name('tarefas.done')->middleware('auth'); // Marcar resolvido/não.
 
 });
 
 
 Route::prefix('config')->group(function(){
 
-    Route::get('/', [ConfigController::class, 'index'])->middleware('auth');
+    Route::get('/', [ConfigController::class, 'index']);
     Route::post('/', [ConfigController::class, 'index']);
     Route::get('permissoes', [ConfigController::class, 'permissoes']);
     Route::get('/info', [ConfigController::class, 'info']);
@@ -80,3 +77,6 @@ Route::fallback(function(){
 // Route::get('/user/{id}', function($id){
 //     echo 'Mostrando usuário com id: '.$id;
 // });
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');

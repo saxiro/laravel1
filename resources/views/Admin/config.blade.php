@@ -12,7 +12,7 @@
     </x-alert>
     
 
-
+    @lang('messages.test');
 
     <form method="POST">
         @csrf
